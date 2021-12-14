@@ -4,7 +4,8 @@ const cors=require("cors")
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer")
-const path = require("path")
+const path = require("path");
+const e = require("express");
 
 const app = express();
 
@@ -291,6 +292,128 @@ app.post("/edit",(req,res)=>{
         }
         else{
             res.send("Not edited")
+        }
+    })
+})
+
+//Adding item
+app.post("/cart",(req,res)=>{
+    const userid=req.body.userid
+    const productid=req.body.productid
+    const quantity=req.body.quantity
+
+    db.query("insert into shopping_cart.cart (user_id,product_id,quantity) values (?,?,?) on duplicate key update quantity = quantity + ?",[userid,productid,quantity,quantity],(err,result)=>{
+        if(err){
+            console.log(err)
+        }
+        if(result){
+            res.send("Item added")
+        }
+        else{
+            res.send("Item not added")
+        }
+    })
+})
+
+//Getting cart products
+app.get("/cart",(req,res)=>{
+    db.query("select name,price,cart.quantity,cart.product_id,user_id,price*quantity as totalprice from shopping_cart.cart inner join shopping_cart.products on cart.product_id = products.product_id",(err,result)=>{
+        if(err){
+            console.log(err)
+        }
+        if(result!='')
+        {
+            res.send(result)
+        }
+        else{
+            res.send({err:"Cart is empty"})
+        }
+    })
+})
+//Total price in cart
+app.post("/total",(req,res)=>{
+    const userid=req.body.userid
+    db.query("select sum(quantity*price) as totalprice from shopping_cart.cart inner join shopping_cart.products on cart.product_id = products.product_id where user_id=? ",[userid],(err,result)=>{
+        if(err){
+            console.log(err)
+        }
+        if(result){
+            res.send(result)
+        }
+        else{
+            res.send("Cart empty")
+        }
+    })
+})
+
+//Delete products from cart
+app.post("/delete",(req,res)=>{
+    const userid=req.body.userid
+    const productid=req.body.productid
+    db.query("delete from shopping_cart.cart where user_id=? and product_id=? ",[userid,productid],(err,result)=>{
+        if(err){
+            console.log(err)
+        }
+        if(result){
+            res.send("Product deleted from cart")
+        }
+        else{
+            res.send("Product not deleted")
+        }
+    })
+})
+
+//Place order
+app.post("/orders",(req,res)=>{
+    const userid=req.body.userid
+    db.query("insert into shopping_cart.orders (user_id,product_id,quantity) select user_id,product_id,quantity from cart where user_id = ?",[userid],(err,result)=>{
+      if(err){
+          console.log(err)
+      }  
+      if(result){
+          db.query("delete from shopping_cart.cart where user_id=?",[userid],(err,result)=>{
+              if(err){
+                  console.log(err)
+              }
+              if(result){
+                  res.send("Order placed")
+              }
+              else{
+                  res.send("Order not placed")
+              }
+          })
+      }
+      else{
+          res.send({err:"Order not placed."})
+      }
+    })
+})
+
+//Admin orders
+app.get("/adminorders",(req,res)=>{
+    db.query("select * from shopping_cart.orders",(err,result)=>{
+        if(err){
+            console.log(err)
+        }
+        if(result){
+            res.send(result)
+        }
+        else{
+            res.send({err:"No orders"})
+        }
+    })
+})
+//customer view orders
+app.get("/customerorders",(req,res)=>{
+    db.query("select name,price,user_id,quantity from shopping_cart.orders inner join shopping_cart.products on orders.product_id = products.product_id",(err,result)=>{
+        if(err){
+            console.log(err)
+        }
+        if(result){
+            res.send(result)
+        }
+        else{
+            res.send({err:"You don't have any active orders."})
         }
     })
 })

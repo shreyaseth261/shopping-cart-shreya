@@ -5,7 +5,7 @@ const Footer = () => {
         <div>
             <footer className="footer">
                 <div className="h1">
-                    <h1 className="cartname">Shopping Cart</h1>
+                    <h1 className="cartname cartname-footer">Shopping Cart</h1>
                 </div>
                 <div className="h2">
                     <p className="section">Home</p>

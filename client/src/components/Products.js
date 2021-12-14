@@ -8,6 +8,21 @@ const Products = () => {
     const [products,setProducts] = useState([])
 
     useEffect(() => {
+        (
+            async()=>{
+                await axios.get("http://localhost:3001/admin",{
+                    withCredentials:true
+                }).then(res =>{
+                    if(res.data.err){
+                        history("/login")
+                    }
+                })
+            }
+        )()
+    }, [])
+
+
+    useEffect(() => {
         ( 
             async()=>{
                 await axios.get("http://localhost:3001/products").then(res=>{

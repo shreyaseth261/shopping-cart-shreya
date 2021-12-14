@@ -52,8 +52,16 @@ const Men = () => {
         quantity:Yup.number().min(1,"Please select atleast 1 unit.")
     })
     
-    const onSubmit = (values,reset)=>{
+    const onSubmit = async(values,reset)=>{
         console.log(values)
+        console.log(values)
+        await axios.post("http://localhost:3001/cart",{
+            userid:values.userid,
+            productid:values.productid,
+            quantity:values.quantity
+        }).then(res=>{
+            console.log(res.data)
+        })
         reset.resetForm()
     }
     return (

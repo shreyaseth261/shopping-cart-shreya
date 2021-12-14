@@ -9,8 +9,11 @@ import Admin from './components/Admin';
 import Products from './components/Products';
 import Orders from './components/Orders';
 import Shoppingbag from './components/Shoppingbag';
+import Vieworders from './components/Vieworders';
+
 
 function App() {
+
   return (
     <div className="App">
      <Router>
@@ -24,6 +27,7 @@ function App() {
          <Route path="/admin/products" element={<Products/>}/>
          <Route path="/admin/orders" element={<Orders/>}/>
          <Route path="/shoppingbag" element={<Shoppingbag/>}/>
+         <Route path="/vieworders" element={<Vieworders/>}/>
          
         </Routes>
        

@@ -18,7 +18,7 @@ const Main = () => {
     const poster="C:\react\shopping cart\client\src\video";
     const history=useNavigate()
     const [username,setUsername]=useState('')
-
+    
     useEffect(() => {
         (
             async()=>{
@@ -37,7 +37,7 @@ const Main = () => {
     }, [])
 
     
-
+   
     return (
         <div className="header-main-div">
             <Header username={username}/>
